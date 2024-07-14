@@ -50,6 +50,10 @@ button.clear-button {
   background-color: red;
 }
 
+button.confirm-button {
+  background-color: #10bc49;
+}
+
 ul {
   list-style-type: none;
   padding: 0;

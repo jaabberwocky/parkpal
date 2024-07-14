@@ -85,9 +85,9 @@ function App() {
     <div className="App">
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
       <h1>ParkPal</h1>
-      <button onClick={toggleEditMode}>
-        {isEditMode ? "🚗Switch to Main Mode" : "⚙️Switch to Edit Mode"}
-      </button>
+      {!isEditMode && (
+        <button onClick={toggleEditMode}>⚙️ Switch to Edit Mode</button>
+      )}
       {isEditMode ? (
         <div>
           <div>
@@ -121,6 +121,9 @@ function App() {
           </ul>
           <button onClick={clearAllDecks} className="clear-button">
             Clear all
+          </button>
+          <button onClick={toggleEditMode} className="confirm-button">
+            Confirm
           </button>
         </div>
       ) : (
