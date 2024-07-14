@@ -1,4 +1,10 @@
-# Getting Started with Create React App
+# ParkPal
+
+Progressive Web Application (PWA) written to aid my ailing memory on which deck I parked my car at.
+
+Created with React.
+
+## CRA Documentation
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
