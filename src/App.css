@@ -54,6 +54,10 @@ button.confirm-button {
   background-color: #10bc49;
 }
 
+button.toggle-button {
+  background-color: #696767;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
