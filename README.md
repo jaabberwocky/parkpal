@@ -1,5 +1,8 @@
 # ParkPal
 
+<img src="./public/logo192.png" width="200
+px">
+
 Progressive Web Application (PWA) written to aid my ailing memory on which deck I parked my car at.
 
 Created with React.
