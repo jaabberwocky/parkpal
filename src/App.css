@@ -26,6 +26,7 @@ button {
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  font-size: 0.9rem;
 }
 
 button:hover {
@@ -52,6 +53,7 @@ button.clear-button {
 ul {
   list-style-type: none;
   padding: 0;
+
 }
 
 li {
@@ -64,6 +66,7 @@ h2 {
 
 p {
   color: #333;
+  font-size: 1.2rem;
 }
 
 .deck-buttons {
@@ -75,6 +78,7 @@ p {
 .deck-buttons button {
   margin: 5px;
   margin-bottom: 20px;
+  font-size: 2rem;
 }
 
 /* Styling for the Currently Parked At section */
