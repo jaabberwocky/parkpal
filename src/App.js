@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import TutorialModal from "./TutorialModal";
+import logo from "./logo192.png";
 
 function App() {
   const [decks, setDecks] = useState(() => {
@@ -84,9 +85,12 @@ function App() {
   return (
     <div className="App">
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
+      <img src={logo} alt="logo" width={150} />
       <h1>ParkPal</h1>
       {!isEditMode && (
-        <button onClick={toggleEditMode}>⚙️ Switch to Edit Mode</button>
+        <button onClick={toggleEditMode} className="toggle-button">
+          ⚙️ Switch to Edit Mode
+        </button>
       )}
       {isEditMode ? (
         <div>
