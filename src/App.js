@@ -3,23 +3,28 @@ import "./App.css";
 import TutorialModal from "./TutorialModal";
 import logo from "./logo192.png";
 
+const getLocalStorageItem = (key, defaultValue) => {
+  try {
+    const savedItem = localStorage.getItem(key);
+    return savedItem ? JSON.parse(savedItem) : defaultValue;
+  } catch (error) {
+    console.error(`Error getting ${key} from localStorage`, error);
+    return defaultValue;
+  }
+};
+
 function App() {
-  const [decks, setDecks] = useState(() => {
-    const savedDecks = localStorage.getItem("decks");
-    return savedDecks ? JSON.parse(savedDecks) : [];
-  });
+  const [decks, setDecks] = useState(() => getLocalStorageItem("decks", []));
   const [newDeck, setNewDeck] = useState("");
   const [editIndex, setEditIndex] = useState(-1);
   const [editDeck, setEditDeck] = useState("");
   const [selectedDeck, setSelectedDeck] = useState("");
-  const [confirmedDeck, setConfirmedDeck] = useState(() => {
-    const savedConfirmedDeck = localStorage.getItem("confirmedDeck");
-    return savedConfirmedDeck ? savedConfirmedDeck : "";
-  });
-  const [lastParked, setLastParked] = useState(() => {
-    const savedLastParked = localStorage.getItem("lastParked");
-    return savedLastParked ? savedLastParked : "";
-  });
+  const [confirmedDeck, setConfirmedDeck] = useState(() =>
+    getLocalStorageItem("confirmedDeck", "")
+  );
+  const [lastParked, setLastParked] = useState(() =>
+    getLocalStorageItem("lastParked", "")
+  );
   const [isEditMode, setIsEditMode] = useState(decks.length === 0);
   const [showTutorial, setShowTutorial] = useState(decks.length === 0);
 
@@ -37,7 +42,7 @@ function App() {
 
   const addDeck = () => {
     if (newDeck.trim()) {
-      setDecks([...decks, newDeck.trim()]);
+      setDecks((prevDecks) => [...prevDecks, newDeck.trim()]);
       setNewDeck("");
     }
   };
@@ -49,30 +54,29 @@ function App() {
 
   const updateDeck = () => {
     if (editDeck.trim()) {
-      const updatedDecks = decks.map((deck, index) =>
-        index === editIndex ? editDeck.trim() : deck
+      setDecks((prevDecks) =>
+        prevDecks.map((deck, index) =>
+          index === editIndex ? editDeck.trim() : deck
+        )
       );
-      setDecks(updatedDecks);
       setEditIndex(-1);
       setEditDeck("");
     }
   };
 
   const deleteDeck = (index) => {
-    const updatedDecks = decks.filter((_, i) => i !== index);
-    setDecks(updatedDecks);
+    setDecks((prevDecks) => prevDecks.filter((_, i) => i !== index));
   };
 
   const saveSelectedDeck = () => {
     if (selectedDeck) {
       setConfirmedDeck(selectedDeck);
-      const timestamp = new Date().toLocaleString();
-      setLastParked(timestamp);
+      setLastParked(new Date().toLocaleString());
     }
   };
 
   const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
+    setIsEditMode((prevMode) => !prevMode);
   };
 
   const clearAllDecks = () => {
@@ -93,69 +97,117 @@ function App() {
         </button>
       )}
       {isEditMode ? (
-        <div>
-          <div>
-            <input
-              type="text"
-              value={newDeck}
-              onChange={(e) => setNewDeck(e.target.value)}
-              placeholder="Add a new deck"
-            />
-            <button onClick={addDeck}>Add Deck</button>
-          </div>
-          {editIndex >= 0 && (
-            <div>
-              <input
-                type="text"
-                value={editDeck}
-                onChange={(e) => setEditDeck(e.target.value)}
-                placeholder="Edit deck label"
-              />
-              <button onClick={updateDeck}>Update Deck</button>
-            </div>
-          )}
-          <ul>
-            {decks.map((deck, index) => (
-              <li key={index}>
-                {deck}
-                <button onClick={() => editDeckLabel(index)}>Edit</button>
-                <button onClick={() => deleteDeck(index)}>Delete</button>
-              </li>
-            ))}
-          </ul>
-          <button onClick={clearAllDecks} className="clear-button">
-            Clear all
-          </button>
-          <button onClick={toggleEditMode} className="confirm-button">
-            Confirm
-          </button>
-        </div>
+        <EditMode
+          decks={decks}
+          newDeck={newDeck}
+          setNewDeck={setNewDeck}
+          addDeck={addDeck}
+          editIndex={editIndex}
+          editDeck={editDeck}
+          setEditDeck={setEditDeck}
+          updateDeck={updateDeck}
+          editDeckLabel={editDeckLabel}
+          deleteDeck={deleteDeck}
+          clearAllDecks={clearAllDecks}
+          toggleEditMode={toggleEditMode}
+        />
       ) : (
-        <div>
-          <div className="deck-buttons">
-            {decks.map((deck, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedDeck(deck)}
-                className={deck === selectedDeck ? "selected" : ""}
-              >
-                {deck}
-              </button>
-            ))}
-          </div>
-          <button onClick={saveSelectedDeck} disabled={!selectedDeck}>
-            Save
-          </button>
-          {confirmedDeck && (
-            <div className="parked-info">
-              <h2>Parked at: {confirmedDeck}</h2>
-              <p>Last parked at: {lastParked}</p>
-            </div>
-          )}
-        </div>
+        <ViewMode
+          decks={decks}
+          selectedDeck={selectedDeck}
+          setSelectedDeck={setSelectedDeck}
+          saveSelectedDeck={saveSelectedDeck}
+          confirmedDeck={confirmedDeck}
+          lastParked={lastParked}
+        />
       )}
     </div>
   );
 }
+
+const EditMode = ({
+  decks,
+  newDeck,
+  setNewDeck,
+  addDeck,
+  editIndex,
+  editDeck,
+  setEditDeck,
+  updateDeck,
+  editDeckLabel,
+  deleteDeck,
+  clearAllDecks,
+  toggleEditMode,
+}) => (
+  <div>
+    <div>
+      <input
+        type="text"
+        value={newDeck}
+        onChange={(e) => setNewDeck(e.target.value)}
+        placeholder="Add a new deck"
+      />
+      <button onClick={addDeck}>Add Deck</button>
+    </div>
+    {editIndex >= 0 && (
+      <div>
+        <input
+          type="text"
+          value={editDeck}
+          onChange={(e) => setEditDeck(e.target.value)}
+          placeholder="Edit deck label"
+        />
+        <button onClick={updateDeck}>Update Deck</button>
+      </div>
+    )}
+    <ul>
+      {decks.map((deck, index) => (
+        <li key={index}>
+          {deck}
+          <button onClick={() => editDeckLabel(index)}>Edit</button>
+          <button onClick={() => deleteDeck(index)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+    <button onClick={clearAllDecks} className="clear-button">
+      Clear all
+    </button>
+    <button onClick={toggleEditMode} className="confirm-button">
+      Confirm
+    </button>
+  </div>
+);
+
+const ViewMode = ({
+  decks,
+  selectedDeck,
+  setSelectedDeck,
+  saveSelectedDeck,
+  confirmedDeck,
+  lastParked,
+}) => (
+  <div>
+    <div className="deck-buttons">
+      {decks.map((deck, index) => (
+        <button
+          key={index}
+          onClick={() => setSelectedDeck(deck)}
+          className={deck === selectedDeck ? "selected" : ""}
+        >
+          {deck}
+        </button>
+      ))}
+    </div>
+    <button onClick={saveSelectedDeck} disabled={!selectedDeck}>
+      Save
+    </button>
+    {confirmedDeck && (
+      <div className="parked-info">
+        <h2>Parked at: {confirmedDeck}</h2>
+        <p>Last parked at: {lastParked}</p>
+      </div>
+    )}
+  </div>
+);
 
 export default App;
