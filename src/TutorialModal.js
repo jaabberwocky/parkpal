@@ -11,11 +11,14 @@ const TutorialModal = ({ onClose }) => {
           get started:
         </p>
         <ol>
-          <li>In Edit Mode, use the input field to add a new deck.</li>
+          <li>Switch to Edit Mode using the ⚙️ button.</li>
+          <li>Use the input field to add a new deck.</li>
           <li>Click the "Add Deck" button to save it.</li>
-          <li>Click "Confirm" to select and save your parked decks.</li>
+          <li>Click "Confirm" to save your changes.</li>
         </ol>
-        <button onClick={onClose}>Got it!</button>
+        <button onClick={onClose} className="close-button">
+          Got it!
+        </button>
       </div>
     </div>
   );
